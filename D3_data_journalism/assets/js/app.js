@@ -17,7 +17,7 @@ var chartHeight = svgHeight - chartMargin.top - chartMargin.bottom;
 
 // Select body, append SVG area to it, and set the dimensions
 var svg = d3
-  .select("scatter")
+  .select("#scatter")
   .append("svg")
   .attr("height", svgHeight)
   .attr("width", svgWidth);
@@ -42,17 +42,18 @@ d3.csv("/D3_data_journalism/assets/data/data.csv").then(function(data)
 
     console.log("State List:",state_list);
 
+     // scale x to chart width
+     var xScale = d3.scaleLinear()
+                    .domain([20, d3.max(data, d => d.poverty)])
+                    .range([0, chartWidth])
+                    // .padding(0.05);
+
    // scale y to chart height
     var yScale = d3.scaleLinear()
-                    .domain([0, d3.max(healthcare_list)])
+                    .domain([6, d3.max(data, d => d.healthcare)])
                     .range([chartHeight, 0]);
 
-    // scale x to chart width
-    var xScale = d3.scaleBand()
-                    .domain(poverty_list)
-                    .range([0, chartWidth])
-                    .padding(0.05);
-
+   
     // create axes
     var yAxis = d3.axisLeft(yScale);
     var xAxis = d3.axisBottom(xScale);
@@ -67,6 +68,18 @@ d3.csv("/D3_data_journalism/assets/data/data.csv").then(function(data)
     // and pass in the selector without breaking the chaining
     chartGroup.append("g")
                 .call(yAxis);
+
+    chartGroup.selectAll("circle")
+                .data(data)
+                .enter()
+                .append("circle")
+                //.classed("bar", true)
+                .attr("cx", d => xScale(d.poverty))
+                .attr("cy", d => yScale(d.healthcare))
+                .attr("r","15")
+                .attr("fill", "pink")
+                .attr("opacity", ".5");
+                //.attr("text",d => d.hair_length);
 
 }).catch(function(error) {
     console.log(error);
