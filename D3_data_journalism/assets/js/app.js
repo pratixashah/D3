@@ -1,7 +1,7 @@
 // @TODO: YOUR CODE HERE!
 // Define SVG area dimensions
-var svgWidth = 960;
-var svgHeight = 660;
+var svgWidth = 660;
+var svgHeight = 400;
 
 // Define the chart's margins as an object
 var chartMargin = {
@@ -28,6 +28,9 @@ var svg = d3
 
 d3.csv("/assets/data/data.csv").then(function(data)
 {
+  // var chartGroup = svg.append("g")
+  // .attr("transform", `translate(${chartMargin.left}, ${chartMargin.top})`);
+  
     console.log(data);
 
     let poverty_list = data.map(data => data.poverty);
@@ -58,7 +61,6 @@ d3.csv("/assets/data/data.csv").then(function(data)
                     .domain([0, d3.max(data, d => d.healthcare)])
                     .range([chartHeight, 0]);
 
-   
     // create axes
     var yAxis = d3.axisLeft(yScale);
     var xAxis = d3.axisBottom(xScale);
@@ -69,8 +71,7 @@ d3.csv("/assets/data/data.csv").then(function(data)
                 .call(xAxis);
 
     // set y to the y axis
-    // This syntax allows us to call the axis function
-    // and pass in the selector without breaking the chaining
+
     chartGroup.append("g")
                 .call(yAxis);
 
@@ -80,23 +81,19 @@ d3.csv("/assets/data/data.csv").then(function(data)
                 .append("circle")
                 .attr("cx", d => xScale(d.poverty))
                 .attr("cy", d => yScale(d.healthcare))
-                .attr("r","15")
+                .attr("r","8")
                 .attr("fill", "pink")
-                .attr("text",d => d.abbr);
-                //.attr("opacity", ".5");
-                // .selectAll("text")
-                // .append("text")
-                // .text(function(d){
-                //     return d.abbr;
-                // })
+                .attr("text",d => d.id + ":" + d.abbr);
 
-    // chartGroup.selectAll("text")
-    //             .data(data)
-    //             .enter()
-    //             .append("text")
-    //             .text(function(d){
-    //                 return d.abbr;
-    //             })
+      chartGroup.selectAll("circle")
+                .select("text")
+                .data(data)
+                .enter()
+                .append("text")
+                .attr("dx", d => xScale(d.poverty)-5)
+                .attr("dy", d => yScale(d.healthcare)+3)
+                .text(function(d){return d.abbr})
+                .attr("font-size",8);
 
 
 })
