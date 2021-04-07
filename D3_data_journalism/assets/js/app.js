@@ -7,8 +7,8 @@ var svgHeight = 400;
 var chartMargin = {
   top: 30,
   right: 30,
-  bottom: 30,
-  left: 30
+  bottom: 50,
+  left: 50
 };
 
 // Define dimensions of the chart area
@@ -96,6 +96,19 @@ d3.csv("/assets/data/data.csv").then(function(data)
                 .attr("font-size",8);
 
 
+                // Create axes labels
+    chartGroup.append("text")
+              .attr("transform", "rotate(-90)")
+              .attr("y", 0 - chartMargin.left - 5)
+              .attr("x", 0 - (chartHeight / 2) - 40)
+              .attr("dy", "1em")
+              .attr("class", "axisText")
+              .text("Lacks Healthcare (%)");
+
+    chartGroup.append("text")
+            .attr("transform", `translate(${(svgWidth / 2)-100}, ${chartHeight + chartMargin.top + 10})`)
+            .attr("class", "axisText")
+            .text("In Poverty (%)");
 })
 // .catch(function(error) {
 //     console.log(error);
