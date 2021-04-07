@@ -26,7 +26,7 @@ var svg = d3
   .attr("transform", `translate(${chartMargin.left}, ${chartMargin.top})`);
 
 
-d3.csv("/D3_data_journalism/assets/data/data.csv").then(function(data)
+d3.csv("/assets/data/data.csv").then(function(data)
 {
     console.log(data);
 
@@ -50,8 +50,8 @@ d3.csv("/D3_data_journalism/assets/data/data.csv").then(function(data)
      // scale x to chart width
      var xScale = d3.scaleLinear()
                     .domain([d3.min(data, d => d.poverty)*0.9, d3.max(data, d => d.poverty)*1.1])
-                    .range([0, chartWidth])
-                    // .padding(0.05);
+                    .range([0, chartWidth]);
+                    //.padding(0.05);
 
    // scale y to chart height
     var yScale = d3.scaleLinear()
@@ -74,18 +74,32 @@ d3.csv("/D3_data_journalism/assets/data/data.csv").then(function(data)
     chartGroup.append("g")
                 .call(yAxis);
 
-    var group = chartGroup.selectAll("circle")
+    chartGroup.selectAll("circle")
                 .data(data)
                 .enter()
                 .append("circle")
-                //.classed("bar", true)
                 .attr("cx", d => xScale(d.poverty))
                 .attr("cy", d => yScale(d.healthcare))
                 .attr("r","15")
                 .attr("fill", "pink")
-                .attr("opacity", ".5");
-                //.attr("text",d => d.hair_length);
+                .attr("text",d => d.abbr);
+                //.attr("opacity", ".5");
+                // .selectAll("text")
+                // .append("text")
+                // .text(function(d){
+                //     return d.abbr;
+                // })
 
-}).catch(function(error) {
-    console.log(error);
-  });
+    // chartGroup.selectAll("text")
+    //             .data(data)
+    //             .enter()
+    //             .append("text")
+    //             .text(function(d){
+    //                 return d.abbr;
+    //             })
+
+
+})
+// .catch(function(error) {
+//     console.log(error);
+//   });
