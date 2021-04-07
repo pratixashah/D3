@@ -42,15 +42,20 @@ d3.csv("/D3_data_journalism/assets/data/data.csv").then(function(data)
 
     console.log("State List:",state_list);
 
+    data.forEach(function(data) {
+        data.poverty = +data.poverty;
+        data.healthcare = +data.healthcare;
+      });
+
      // scale x to chart width
      var xScale = d3.scaleLinear()
-                    .domain([20, d3.max(data, d => d.poverty)])
+                    .domain([d3.min(data, d => d.poverty)*0.9, d3.max(data, d => d.poverty)*1.1])
                     .range([0, chartWidth])
                     // .padding(0.05);
 
    // scale y to chart height
     var yScale = d3.scaleLinear()
-                    .domain([6, d3.max(data, d => d.healthcare)])
+                    .domain([0, d3.max(data, d => d.healthcare)])
                     .range([chartHeight, 0]);
 
    
@@ -69,7 +74,7 @@ d3.csv("/D3_data_journalism/assets/data/data.csv").then(function(data)
     chartGroup.append("g")
                 .call(yAxis);
 
-    chartGroup.selectAll("circle")
+    var group = chartGroup.selectAll("circle")
                 .data(data)
                 .enter()
                 .append("circle")
