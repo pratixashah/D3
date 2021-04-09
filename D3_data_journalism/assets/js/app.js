@@ -26,27 +26,38 @@ var svg = d3
 
 // Initial Params
 var chosenXAxis = "poverty";
+var chosenYAxis = "healthcare";
 
 // function used for updating circles group with new tooltip
-function updateToolTip(chosenXAxis, circlesGroup) {
+function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
 
-  var label;
+  var xlabel;
+  var ylabel;
 
-  if (chosenXAxis === "Poverty") {
-    label = "Poverty";
+  if (chosenXAxis === "poverty") {
+    xlabel = "Poverty";
   }
   else if(chosenXAxis === "age"){
-    label = "age";
+    xlabel = "Age";
   }
   else {
-    label = "income";
+    xlabel = "Income";
   }
 
+  if (chosenYAxis === "obese") {
+    ylabel = "Obese";
+  }
+  else if(chosenYAxis === "healthcare"){
+    ylabel = "Healthcare";
+  }
+  else {
+    ylabel = "Smokes";
+  }
   var toolTip = d3.tip()
   .attr("class", "tooltip")
-  .offset([5, -5])
+  .offset([5, 8])
   .html(function(d) {
-    return (`${d.state}<br>Poverty: ${d.poverty}%<br>Obesity: ${d.obesity}%`);
+    return (`${d.state}<br>${xlabel}: ${d[chosenXAxis]}%<br>${ylabel}: ${d[chosenYAxis]}%`);
   });
 
   // Step 7: Create tooltip in the chart
@@ -55,7 +66,7 @@ function updateToolTip(chosenXAxis, circlesGroup) {
 
   // Step 8: Create event listeners to display and hide the tooltip
   // ==============================
-  cirlceGroup.on("mouseover", function(data) {
+  circlesGroup.on("mouseover", function(data) {
     toolTip.show(data, this);
   })
   // onmouseout event
@@ -116,7 +127,7 @@ d3.csv("/assets/data/data.csv").then(function(data)
     chartGroup.append("g")
                 .call(yAxis);
 
-    var cirlceGroup = chartGroup.selectAll("circle")
+    var circlesGroup = chartGroup.selectAll("circle")
                 .data(data)
                 .enter()
                 .append("circle")
@@ -208,7 +219,7 @@ d3.csv("/assets/data/data.csv").then(function(data)
       .attr("x", 0)
       .attr("y", 20)
       .attr("value", "obesity") // value to grab for event listener
-      .classed("active", true)
+      .classed("inactive", true)
       .text("Obese (%)");
 
     var lblAge = ylabelsGroup.append("text")
@@ -222,11 +233,11 @@ d3.csv("/assets/data/data.csv").then(function(data)
     .attr("x", 0)
     .attr("y", 60)
     .attr("value", "healthcare") // value to grab for event listener
-    .classed("inactive", true)
+    .classed("active", true)
     .text("Lacks Healthcare (%)");
 
     // updateToolTip function above csv import
-  var circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
+  var circlesGroup = updateToolTip(chosenXAxis,chosenYAxis, circlesGroup);
 })
 // .catch(function(error) {
 //     console.log(error);
