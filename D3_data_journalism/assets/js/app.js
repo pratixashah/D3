@@ -75,7 +75,7 @@ d3.csv("/assets/data/data.csv").then(function(data)
     chartGroup.append("g")
                 .call(yAxis);
 
-    chartGroup.selectAll("circle")
+    var cirlceGroup = chartGroup.selectAll("circle")
                 .data(data)
                 .enter()
                 .append("circle")
@@ -95,7 +95,6 @@ d3.csv("/assets/data/data.csv").then(function(data)
                 .text(function(d){return d.abbr})
                 .attr("font-size",8);
 
-
                 // Create axes labels
     chartGroup.append("text")
               .attr("transform", "rotate(-90)")
@@ -109,6 +108,30 @@ d3.csv("/assets/data/data.csv").then(function(data)
             .attr("transform", `translate(${(svgWidth / 2)-100}, ${chartHeight + chartMargin.top + 10})`)
             .attr("class", "axisText")
             .text("In Poverty (%)");
+
+
+            // Step 6: Initialize tool tip
+    // ==============================
+    var toolTip = d3.tip()
+    .attr("class", "tooltip")
+    .offset([5, -5])
+    .html(function(d) {
+      return (`${d.state}<br>Poverty: ${d.poverty}%<br>Obesity: ${d.obesity}%`);
+    });
+
+  // Step 7: Create tooltip in the chart
+  // ==============================
+  chartGroup.call(toolTip);
+
+  // Step 8: Create event listeners to display and hide the tooltip
+  // ==============================
+  cirlceGroup.on("mouseover", function(data) {
+    toolTip.show(data, this);
+  })
+    // onmouseout event
+    .on("mouseout", function(data, index) {
+      toolTip.hide(data);
+    });
 })
 // .catch(function(error) {
 //     console.log(error);
