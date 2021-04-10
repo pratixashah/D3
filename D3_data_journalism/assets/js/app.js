@@ -43,8 +43,11 @@ function xScale(data, chosenXAxis) {
 function yScale(data, chosenYAxis) {
   // create scales
 
+  console.log(d3.map(data, d => d[chosenYAxis]));
+  console.log("max",d3.max(data, d => d[chosenYAxis]));
   var yLinearScale = d3.scaleLinear()
-                    .domain([0, d3.max(data, d => d[chosenYAxis])])
+                    //.domain([0, d3.max(data, d => d[chosenYAxis])])
+                    .domain([0,40])
                     .range([chartHeight, 0]);
 
   return yLinearScale;
@@ -90,7 +93,7 @@ function renderCircleText(circleTextGroup, newXScale, chosenXAxis, attrValue) {
 
   circleTextGroup.transition()
                 .duration(1000)
-                .attr(attrValue, d => newXScale(d[chosenXAxis])-5);
+                .attr(attrValue, d => newXScale(d[chosenXAxis]));
 
   return circleTextGroup;
 }
@@ -122,7 +125,7 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
   }
   var toolTip = d3.tip()
   .attr("class", "tooltip")
-  .offset([5, 8])
+  .offset([-5, -5])
   .html(function(d) {
     return (`${d.state}<br>${xlabel}: ${d[chosenXAxis]}%<br>${ylabel}: ${d[chosenYAxis]}%`);
   });
@@ -151,7 +154,7 @@ d3.csv("/assets/data/data.csv").then(function(data)
   // var chartGroup = svg.append("g")
   // .attr("transform", `translate(${chartMargin.left}, ${chartMargin.top})`);
   
-    console.log(data);
+    console.log(d3.max(data.map(data => data.smokes)));
 
     let poverty_list = data.map(data => data.poverty);
 
