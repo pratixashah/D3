@@ -3,6 +3,10 @@ This project aims to provide data visualization by analyzing the current trends 
 
 The data set included for analysis is based on 2014 ACS 1-year estimates from the US Census Bureau. The current data set includes data on rates of income, obesity, poverty, etc. by state. MOE stands for “margin of error.”
 
+- **Data Resource:** D3_data_journalism/assets/data/data.csv
+- **Script File:** D3_data_journalism/assets/js/app.js
+- **Landing page:** D3_data_journalism/index.html
+
 ## D3 Dabbler
 It creates a scatter plot between two of the data variables such as Healthcare vs. Poverty or Smokers vs. Age.
 
