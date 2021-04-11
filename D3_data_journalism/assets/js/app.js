@@ -33,7 +33,7 @@ function xScale(data, chosenXAxis) {
   // create scales
   var xLinearScale = d3.scaleLinear()
     .domain([d3.min(data, d => d[chosenXAxis]) * 0.9, d3.max(data, d => d[chosenXAxis]) * 1.1 ])
-    .range([0, svgWidth]);
+    .range([0, chartWidth]);
 
   return xLinearScale;
 
@@ -45,13 +45,22 @@ function yScale(data, chosenYAxis) {
 
   console.log(d3.map(data, d => d[chosenYAxis]));
   console.log("max",d3.max(data, d => d[chosenYAxis]));
+
+  if(chosenYAxis === "smokes")
+  {
+    var yLinearScale = d3.scaleLinear()
+                        //.domain([d3.min(data, d => d[chosenYAxis])* 0.9, d3.max(data, d => d[chosenYAxis])* 1.1])
+                        .domain([0,35])
+                        .range([chartHeight, 0]);
+  }
+  else
+  {
   var yLinearScale = d3.scaleLinear()
-                    //.domain([0, d3.max(data, d => d[chosenYAxis])])
-                    .domain([0,40])
+                    .domain([d3.min(data, d => d[chosenYAxis])* 0.9, d3.max(data, d => d[chosenYAxis])* 1.1])
+                    //.domain([0,40])
                     .range([chartHeight, 0]);
-
+  }
   return yLinearScale;
-
 }
 
 // function used for updating xAxis var upon click on axis label
@@ -114,8 +123,8 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
     xlabel = "Income";
   }
 
-  if (chosenYAxis === "obese") {
-    ylabel = "Obese";
+  if (chosenYAxis === "obesity") {
+    ylabel = "Obesity";
   }
   else if(chosenYAxis === "healthcare"){
     ylabel = "Healthcare";
@@ -123,6 +132,7 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
   else {
     ylabel = "Smokes";
   }
+
   var toolTip = d3.tip()
   .attr("class", "tooltip")
   .offset([-5, -5])
@@ -147,13 +157,9 @@ function updateToolTip(chosenXAxis, chosenYAxis, circlesGroup) {
   return circlesGroup;
 }
 
-
-
 d3.csv("/assets/data/data.csv").then(function(data)
 {
-  // var chartGroup = svg.append("g")
-  // .attr("transform", `translate(${chartMargin.left}, ${chartMargin.top})`);
-  
+   
     console.log(d3.max(data.map(data => data.smokes)));
 
     let poverty_list = data.map(data => data.poverty);
@@ -173,20 +179,10 @@ d3.csv("/assets/data/data.csv").then(function(data)
         data.healthcare = +data.healthcare;
       });
 
-     // scale x to chart width
-    //  var xScale = d3.scaleLinear()
-    //                 .domain([d3.min(data, d => d.poverty)*0.9, d3.max(data, d => d.poverty)*1.1])
-    //                 .range([0, chartWidth]);
-    //                 //.padding(0.05);
-
     var xLinearScale = xScale(data, chosenXAxis);
 
    // scale y to chart height
    var yLinearScale = yScale(data, chosenYAxis);
-
-    // var yScale = d3.scaleLinear()
-    //                 .domain([0, d3.max(data, d => d.healthcare)])
-    //                 .range([chartHeight, 0]);
 
     // create axes
     var leftAxis = d3.axisLeft(yLinearScale);
@@ -199,7 +195,6 @@ d3.csv("/assets/data/data.csv").then(function(data)
                 .call(bottomAxis);
 
     // set y to the y axis
-
     var yAxis = chartGroup.append("g")
                 .call(leftAxis);
 
@@ -224,43 +219,6 @@ d3.csv("/assets/data/data.csv").then(function(data)
                 .attr("dy", d => yLinearScale(d[chosenYAxis])+3)
                 .text(function(d){return d.abbr})
                 .attr("font-size",8);
-
-            // Step 6: Initialize tool tip
-    // ==============================
-  //   var toolTip = d3.tip()
-  //   .attr("class", "tooltip")
-  //   .offset([5, -5])
-  //   .html(function(d) {
-  //     return (`${d.state}<br>Poverty: ${d.poverty}%<br>Obesity: ${d.obesity}%`);
-  //   });
-
-  // // Step 7: Create tooltip in the chart
-  // // ==============================
-  // chartGroup.call(toolTip);
-
-  // // Step 8: Create event listeners to display and hide the tooltip
-  // // ==============================
-  // cirlceGroup.on("mouseover", function(data) {
-  //   toolTip.show(data, this);
-  // })
-  //   // onmouseout event
-  //   .on("mouseout", function(data, index) {
-  //     toolTip.hide(data);
-  //   });
-
-      // // Create axes labels
-      // chartGroup.append("text")
-      // .attr("transform", "rotate(-90)")
-      // .attr("y", 0 - chartMargin.left - 5)
-      // .attr("x", 0 - (chartHeight / 2) - 40)
-      // .attr("dy", "1em")
-      // .attr("class", "axisText")
-      // .text("Lacks Healthcare (%)");
-
-  // chartGroup.append("text")
-  //   .attr("transform", `translate(${(svgWidth / 2)-100}, ${chartHeight + chartMargin.top + 10})`)
-  //   .attr("class", "axisText")
-  //   .text("In Poverty (%)");
 
   // Create group for two x-axis labels
   var xlabelsGroup = chartGroup.append("g")
@@ -387,6 +345,6 @@ xlabelsGroup.append("text")
     }
   });
 })
-// .catch(function(error) {
-//     console.log(error);
-//   });
+.catch(function(error) {
+    console.log(error);
+  });
